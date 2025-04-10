@@ -7,7 +7,8 @@
 +!start(N, N) <-
     .print("hello world ", N).
 
-+!start(N, M) : N < M <- 
++!start(N, M) <- 
+    N < M;
     .print("hello world ", N);
     !start(N + 1, M).
 

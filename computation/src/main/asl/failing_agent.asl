@@ -9,16 +9,12 @@ failures(0).
 +!gamble <-
     .println("Head or Cross?");
     .random(Coin);
-    if (Coin >= 0.5) {
-        .print("Head! I won :D");
-        !gamble
-    } else {
-        .print("Cross! I lost :C");
-        .fail
-    }.
+    Coin >= 0.5; 
+    .print("Head! I won :D");
+    !gamble.
 
-/*
 -!gamble : failures(N) & max_failures(M) <-
+    .print("Cross! I lost :C");
     -+failures(N + 1);
     if (N < M) {
         .print("Let's retry one more time U.U");
@@ -26,4 +22,3 @@ failures(0).
     } else {
         .print("I'm done with this shit.");
     }.
-*/
