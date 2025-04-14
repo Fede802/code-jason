@@ -6,7 +6,7 @@ MAS robots {
 
 	agents: // which agents partecipates the MAS?
 		rescuer rescuer_agent;
-		//lost lost_agent;
+		lost lost_agent;
 
 	aslSourcePath: // where to find agents' source code
 		"src/main/asl";

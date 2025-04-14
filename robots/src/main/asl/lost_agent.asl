@@ -10,3 +10,8 @@ status(lost).
     !go_around.
 -!go_around : not(status(lost)) <- true.
 /* TODO: handle the rescuing scenario */
+
++?follow(Dir, Response)[source(Sender)] <-
+  .print("I will follow ", Sender, " in direction ", Dir);
+  Response = ok.
+

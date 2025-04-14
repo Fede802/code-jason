@@ -1,10 +1,9 @@
-
 facing(top).
 position(0, 0).
 status(exploring).
 
-//using functor node(X, Y) to represent the path
-travelled_path([node(0, 0)]).
+//using functor node(X, Y) to represent the map point
+map([node(0, 0)]).
 
 
 !rescue.
@@ -24,16 +23,15 @@ travelled_path([node(0, 0)]).
     .print("Obstacle found, changing direction");
     !change_direction;
     !explore.
+-!explore : not(status(exploring)) <- true.
 
 +!come_back <- .fail. /* TODO */
 
 +!go_on(0) <- true.
 +!go_on(N) : N > 0 & free(forward) <-
-    .print("I can go forward");
     !go(forward);
-    .print("I have gone forward");
     !go_on(N - 1).
-+!go_on(_) : obstacle(forward) <- true.
++!go_on(_) : obstacle(forward) <- true. /* TODO and if robot(forward)?*/
 
 +!change_direction : obstacle(left) & obstacle(right) <-
     .print("Let's turn back");
@@ -59,19 +57,22 @@ travelled_path([node(0, 0)]).
     utils.update_pose(Direction);
     !update_path.
 -!go(Direction) : free(Direction) <-
-    .print("Ooops!");
+    .print("Oops!");
     !go(Direction).
 
-+!update_path : position(X, Y) & travelled_path(G) & member(node(X, Y), G) <-
++!update_path : position(X, Y) & map(G) & member(node(X, Y), G) <-
     .print("I have already been here!").
-+!update_path: travelled_path(G) & position(X, Y) <-
++!update_path: map(M) & position(X, Y) <-
     .print("I have never been here before!");
-    .print("I have been in (", X, ", ", Y, ")");
-    -+travelled_path([node(X, Y) | G]);
-    ?travelled_path(G2);
-    .print(G2).
+    -+map([node(X, Y) | M]);
+    ?map(NM);
+    .print(NM).
 
 +position(X, Y) <- .print("I'm in (", X, ", ", Y, ")").
 
 +neighbour(Agent) : status(exploring) <-
-    .print("Hello ", Agent, "! Follow me!").
+  .print("Hello ", Agent, "! Follow me!");
+  .send(Agent, askOne, follow(north, Response), Response);
+  .print("Agent answered: ", Response);
+  -+status(going_back);
+  .fail.

@@ -4,9 +4,7 @@ import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -62,7 +60,10 @@ public class Arena2DEnvironment extends Environment {
 //        System.out.println("getPercepts(" + agName + ")");
         switch (agName){
             case "rescuer" -> {
-                return getRescuerPercepts();
+                return perceptsFor("rescuer");
+            }
+            case "lost" -> {
+                return perceptsFor("lost");
             }
             default -> {
                 throw new IllegalStateException("not implemented");
@@ -70,8 +71,7 @@ public class Arena2DEnvironment extends Environment {
         }
     }
 
-    private Collection<Literal> getRescuerPercepts() {
-        String agent = "rescuer";
+    private Collection<Literal> perceptsFor(String agent) {
         return Stream.concat(surroundingPercepts(agent), neighboursPercepts(agent))
                 .collect(Collectors.toList());
     }
