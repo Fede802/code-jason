@@ -57,7 +57,8 @@ public interface Arena2DModel {
 
     /** Puts an agent (selected by name) into a random pose (absolute position + absolute orientation) */
     default boolean setAgentPoseRandomly(String agent) {
-        return setAgentPose(agent, Vector2D.random(getWidth(), getHeight()), Orientation.random());
+        return setAgentPose(agent, Vector2D.random(3,3), Orientation.SOUTH);
+//        return setAgentPose(agent, Vector2D.random(getWidth(), getHeight()), Orientation.random());
     }
 
     /** Moves an agent (selected by name) of a given amount of steps in a relative direction */

@@ -4,7 +4,9 @@ import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -57,7 +59,21 @@ public class Arena2DEnvironment extends Environment {
 
     @Override
     public Collection<Literal> getPercepts(String agName) {
-        throw new IllegalStateException("not implemented");
+//        System.out.println("getPercepts(" + agName + ")");
+        switch (agName){
+            case "rescuer" -> {
+                return getRescuerPercepts();
+            }
+            default -> {
+                throw new IllegalStateException("not implemented");
+            }
+        }
+    }
+
+    private Collection<Literal> getRescuerPercepts() {
+        String agent = "rescuer";
+        return Stream.concat(surroundingPercepts(agent), neighboursPercepts(agent))
+                .collect(Collectors.toList());
     }
 
     private boolean isPositionObstacleFor(String agent, Vector2D position) {
@@ -66,17 +82,26 @@ public class Arena2DEnvironment extends Environment {
                 .filter(it -> !it.equals(agent)).isPresent();
     }
 
-    private Collection<Literal> surroundingPercepts(String agent) {
-        throw new IllegalStateException("not implemented");
+    private Stream<Literal> surroundingPercepts(String agent) {
+        initializeAgentIfNeeded(agent);
+        return model.getAgentSurroundingPositions(agent).entrySet().stream().map(entry -> {
+            Direction dir = entry.getKey();
+            Vector2D pos = entry.getValue();
+            if (isPositionObstacleFor(agent, pos)) {
+                if (model.isPositionOutside(pos)) {
+                    return Literal.parseLiteral("obstacle(" + dir.name().toLowerCase() + ")");
+                }
+                return Literal.parseLiteral("robot(" + dir.name().toLowerCase() + ")");
+            } else {
+                return Literal.parseLiteral("free(" + dir.name().toLowerCase() + ")");
+            }
+        });
     }
 
-    private Collection<Literal> neighboursPercepts(String agent) {
-        Collection<Literal> neighbours = model.getAgentNeighbours(agent).stream()
+    private Stream<Literal> neighboursPercepts(String agent) {
+        return model.getAgentNeighbours(agent).stream()
                 .map(it -> String.format("neighbour(%s)", it))
-                .map(Literal::parseLiteral)
-                .collect(Collectors.toList());
-
-        return neighbours;
+                .map(Literal::parseLiteral);
     }
 
     /**
@@ -85,21 +110,19 @@ public class Arena2DEnvironment extends Environment {
      */
     @Override
     public boolean executeAction(final String ag, final Structure action) {
-        initializeAgentIfNeeded(ag);
         final boolean result;
         if (RAND.nextDouble() < model.getSlideProbability()) {
             result = false;
         } else if (action.equals(moveForward)) {
-            throw new IllegalStateException("not implemented");
+            result = model.moveAgent(ag, 1, FORWARD);
         } else if (action.equals(moveRight)) {
-            throw new IllegalStateException("not implemented");
+            result = model.moveAgent(ag, 1, RIGHT);
         } else if (action.equals(moveBackward)) {
-            throw new IllegalStateException("not implemented");
+            result = model.moveAgent(ag, 1, BACKWARD);
         } else if (action.equals(moveLeft)) {
-            throw new IllegalStateException("not implemented");
+            result = model.moveAgent(ag, 1, LEFT);
         } else if (action.equals(moveRandom)) {
-            Direction rd = Direction.random();
-            result = model.moveAgent(ag, 1, rd);
+            result = model.moveAgent(ag, 1, Direction.random());
         } else {
             RuntimeException e = new IllegalArgumentException("Cannot handle action: " + action);
             logger.warning(e.getMessage());

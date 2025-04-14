@@ -39,7 +39,13 @@ enum Facing {
     }
 
     public Facing rotate(Direction direction) {
-        return values()[direction.ordinal() / 2 % 4];
+        return switch (direction) {
+            case FORWARD -> this;
+            case RIGHT -> values()[(this.ordinal() + 1) % 4];
+            case BACKWARD -> values()[(this.ordinal() + 2) % 4];
+            case LEFT -> values()[((this.ordinal() - 1) + values().length) % 4];
+            default -> throw new IllegalArgumentException("Cannot rotate: " + direction);
+        };
     }
 
     public Vector2D asVector() {

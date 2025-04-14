@@ -1,6 +1,11 @@
+
 facing(top).
 position(0, 0).
 status(exploring).
+
+//using functor node(X, Y) to represent the path
+travelled_path([node(0, 0)]).
+
 
 !rescue.
 
@@ -16,15 +21,17 @@ status(exploring).
     !change_direction;
     !explore.
 -!explore : status(exploring) <-
+    .print("Obstacle found, changing direction");
     !change_direction;
-    .print("Let's go home!")
     !explore.
 
 +!come_back <- .fail. /* TODO */
 
 +!go_on(0) <- true.
 +!go_on(N) : N > 0 & free(forward) <-
+    .print("I can go forward");
     !go(forward);
+    .print("I have gone forward");
     !go_on(N - 1).
 +!go_on(_) : obstacle(forward) <- true.
 
@@ -49,10 +56,20 @@ status(exploring).
 
 +!go(Direction) : free(Direction) <-
     move(Direction);
-    utils.update_pose(Direction).
+    utils.update_pose(Direction);
+    !update_path.
 -!go(Direction) : free(Direction) <-
     .print("Ooops!");
     !go(Direction).
+
++!update_path : position(X, Y) & travelled_path(G) & member(node(X, Y), G) <-
+    .print("I have already been here!").
++!update_path: travelled_path(G) & position(X, Y) <-
+    .print("I have never been here before!");
+    .print("I have been in (", X, ", ", Y, ")");
+    -+travelled_path([node(X, Y) | G]);
+    ?travelled_path(G2);
+    .print(G2).
 
 +position(X, Y) <- .print("I'm in (", X, ", ", Y, ")").
 
