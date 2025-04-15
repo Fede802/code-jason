@@ -29,7 +29,7 @@ public class update_pose extends DefaultInternalAction {
         Agent currentAgent = ts.getAg();
         Literal currentPosition = currentAgent.findBel(Literal.parseLiteral("position(X, Y)"), un);
         Literal currentFacing = currentAgent.findBel(Literal.parseLiteral("facing(Dir)"), un);
-        System.out.println("currentPosition: " + currentPosition + " currentFacing: " + currentFacing);
+//        System.out.println("currentPosition: " + currentPosition + " currentFacing: " + currentFacing);
         Term nextDirection = args[0];
         currentAgent.delBel(currentFacing);
         currentAgent.delBel(currentPosition);

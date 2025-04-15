@@ -27,6 +27,8 @@ public class Arena2DEnvironment extends Environment {
     public static final Literal moveLeft = Literal.parseLiteral("move(" + LEFT.name().toLowerCase() + ")");
     public static final Literal moveBackward = Literal.parseLiteral("move(" + FORWARD.name().toLowerCase() + ")");
     public static final Literal moveRandom = Literal.parseLiteral("move(random)");
+    public static final Literal rotateRight = Literal.parseLiteral("rotate(" + RIGHT.name().toLowerCase() + ")");
+    public static final Literal rotateLeft = Literal.parseLiteral("rotate(" + LEFT.name().toLowerCase() + ")");
 
     static Logger logger = Logger.getLogger(Arena2DEnvironment.class.getName());
 
@@ -77,6 +79,7 @@ public class Arena2DEnvironment extends Environment {
     }
 
     private boolean isPositionObstacleFor(String agent, Vector2D position) {
+//        System.out.println("Position " + position + " is obstacle for " + agent);
         return model.isPositionOutside(position)
                 || model.getAgentByPosition(position)
                 .filter(it -> !it.equals(agent)).isPresent();
@@ -84,6 +87,7 @@ public class Arena2DEnvironment extends Environment {
 
     private Stream<Literal> surroundingPercepts(String agent) {
         initializeAgentIfNeeded(agent);
+//        System.out.println("Checking obstacle for " + agent + " at " +  "..." + model.getAllAgents());
         return model.getAgentSurroundingPositions(agent).entrySet().stream().map(entry -> {
             Direction dir = entry.getKey();
             Vector2D pos = entry.getValue();
@@ -123,6 +127,10 @@ public class Arena2DEnvironment extends Environment {
             result = model.moveAgent(ag, 1, LEFT);
         } else if (action.equals(moveRandom)) {
             result = model.moveAgent(ag, 1, Direction.random());
+        } else if (action.equals(rotateRight)) {
+            result = model.moveAgent(ag, 0, RIGHT);
+        } else if (action.equals(rotateLeft)) {
+            result = model.moveAgent(ag, 0, LEFT);
         } else {
             RuntimeException e = new IllegalArgumentException("Cannot handle action: " + action);
             logger.warning(e.getMessage());
@@ -132,6 +140,7 @@ public class Arena2DEnvironment extends Environment {
             Thread.sleep(1000L / model.getFPS());
         } catch (InterruptedException ignored) { }
         notifyModelChangedToView();
+//        System.out.println("executeAction(" + ag + ", " + action + ") -> " + result);
         return result;
     }
 }

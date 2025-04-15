@@ -25,8 +25,14 @@ map([node(0, 0)]).
     !explore.
 -!explore : not(status(exploring)) <- true.
 
-+!come_back <- .fail. /* TODO */
++!come_back <-
+    .print("I will come back");
+    .fail. /* TODO */
++!go_on(_) : neighbour(Agent) <-
+    .print("I will talk to my neighbour");
+    !talk_to_neighbour(Agent).
 
++!go_on(_) : not(status(exploring)) <- true.
 +!go_on(0) <- true.
 +!go_on(N) : N > 0 & free(forward) <-
     !go(forward);
@@ -70,9 +76,9 @@ map([node(0, 0)]).
 
 +position(X, Y) <- .print("I'm in (", X, ", ", Y, ")").
 
-+neighbour(Agent) : status(exploring) <-
++!talk_to_neighbour(Agent) : status(exploring) <-
   .print("Hello ", Agent, "! Follow me!");
+  -+status(going_back);
   .send(Agent, askOne, follow(north, Response), Response);
   .print("Agent answered: ", Response);
-  -+status(going_back);
   .fail.

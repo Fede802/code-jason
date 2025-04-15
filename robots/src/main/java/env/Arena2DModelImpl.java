@@ -74,6 +74,7 @@ public class Arena2DModelImpl implements Arena2DModel {
 
     @Override
     public Set<String> getAllAgents() {
+//        System.out.println("getAllAgents()" + agentPoses);
         return agentPoses.keySet();
     }
 
@@ -141,6 +142,7 @@ public class Arena2DModelImpl implements Arena2DModel {
     @Override
     public boolean setAgentPose(String agent, int x, int y, Orientation orientation) {
         synchronized (agentPoses) {
+//            System.out.println("changing pose of " + agent + " to " + x + ", " + y + ", " + orientation);
             if (containsAgent(agent)) {
                 setAgentDirection(agent, orientation);
                 if (isPositionInside(x, y)) {

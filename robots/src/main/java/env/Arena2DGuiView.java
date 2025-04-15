@@ -59,7 +59,12 @@ public class Arena2DGuiView extends JFrame implements Arena2DView {
 
     private Color getColorForAgent(String agent) {
         if (!agentColors.containsKey(agent)) {
-            agentColors.put(agent, randomColor());
+            if (agent.equals("rescuer")) {
+                agentColors.put(agent, Color.GREEN);
+            } else {
+                agentColors.put(agent, Color.BLUE);
+            }
+//            System.out.println("Agent " + agent + " color: " + agentColors.get(agent));
         }
         return agentColors.get(agent);
     }
